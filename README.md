@@ -11,3 +11,9 @@ Folder paths, synchronization interval and log file path should be provided usin
 It is undesirable to use third-party libraries that implement folder synchronization;
 
 It is allowed (and recommended) to use external libraries implementing other well-known algorithms. For example, there is no point in implementing yet another function that calculates MD5 if you need it for the task – it is perfectly acceptable to use a third-party (or built-in) library.
+
+##Usage
+
+csc Program.cs
+
+.\Program.exe "Source Folder Path" "Replica Folder Path" Interval "Log File Path"
