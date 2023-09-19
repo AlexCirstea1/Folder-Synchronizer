@@ -1,0 +1,24 @@
+﻿{
+  "employees": [
+    {
+      "name": "John Doe",
+      "email": "johndoe@example.com",
+      "phone": "555-123-4567"
+    },
+    {
+      "name": "Jane Smith",
+      "email": "janesmith@example.com",
+      "phone": "555-987-6543"
+    },
+    {
+      "name": "Bob Johnson",
+      "email": "bobjohnson@example.com",
+      "phone": "555-555-5555"
+    },
+    {
+      "name": "Alice Brown",
+      "email": "alicebrown@example.com",
+      "phone": "555-789-1234"
+    }
+  ]
+}
