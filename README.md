@@ -12,7 +12,7 @@ It is undesirable to use third-party libraries that implement folder synchroniza
 
 It is allowed (and recommended) to use external libraries implementing other well-known algorithms. For example, there is no point in implementing yet another function that calculates MD5 if you need it for the task – it is perfectly acceptable to use a third-party (or built-in) library.
 
-##Usage
+## Usage
 
 csc Program.cs
 
