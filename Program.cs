@@ -4,37 +4,22 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Collections.Generic;
 
-
 namespace Program
 {
-    internal class Program
+    internal class FolderSync
     {
-        private static string sourcePath;
-        private static string replicaPath;
-        private static string logPath;
-        private static int syncInterval;
+        private string sourcePath;
+        private string replicaPath;
+        private string logPath;
 
-        static void Main(string[] args)
+        public FolderSync(string sourcePath, string replicaPath, string logPath)
         {
-            if (args.Length != 4)
-            {
-                Console.WriteLine(
-                    "Usage: FolderSync.exe <SourceFolderPath> <ReplicaFolderPath> <SyncIntervalInSeconds> <LogFilePath>");
-                return;
-            }
-
-            sourcePath = args[0];
-            replicaPath = args[1];
-            syncInterval = int.Parse(args[2]);
-            logPath = args[3];
-
-            Timer timer = new Timer(state => SynchronizeFolders(), null, 0, syncInterval);
-
-            Console.WriteLine("Press 'Q' to quit.");
-            while (Console.ReadKey().Key != ConsoleKey.Q) ;
+            this.sourcePath = sourcePath;
+            this.replicaPath = replicaPath;
+            this.logPath = logPath;
         }
 
-        public static void SynchronizeFolders()
+        public void SynchronizeFolders()
         {
             try
             {
@@ -47,7 +32,7 @@ namespace Program
             }
         }
 
-        public static void SynchronizeFolder(string sourceFolder, string replicaFolder)
+        public void SynchronizeFolder(string sourceFolder, string replicaFolder)
         {
             var sourceFilePaths = Directory.GetFiles(sourceFolder);
             var replicaFilePaths = Directory.GetFiles(replicaFolder);
@@ -79,7 +64,7 @@ namespace Program
             }
         }
 
-        public static void LogFile(string message)
+        public void LogFile(string message)
         {
             try
             {
@@ -93,14 +78,49 @@ namespace Program
             }
         }
 
-        private static string CalculateMD5(string filePath)
+        private string CalculateMD5(string filePath)
         {
-            using (var md5 = MD5.Create())
-            using (var stream = File.OpenRead(filePath))
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(filePath);
+            var hashBytes = md5.ComputeHash(stream);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+    }
+    internal class Program
+    {
+        private static string sourcePath;
+        private static string replicaPath;
+        private static string logPath;
+        private static int syncInterval;
+
+        private static void Main(string[] args)
+        {
+            if (args.Length != 4)
             {
-                byte[] hashBytes = md5.ComputeHash(stream);
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+                Console.WriteLine(
+                    "Usage: FolderSync.exe <SourceFolderPath> <ReplicaFolderPath> <SyncIntervalInSeconds> <LogFilePath>");
+                return;
             }
+
+            sourcePath = args[0];
+            replicaPath = args[1];
+            syncInterval = int.Parse(args[2]);
+            logPath = args[3];
+
+            var folderSync = new FolderSync(sourcePath, replicaPath, logPath);
+            PeriodicSync(folderSync);
+
+            Console.WriteLine("Press 'Q' to quit.");
+            while (Console.ReadKey().Key != ConsoleKey.Q) ;
+        }
+
+        private static void PeriodicSync(FolderSync folderSync)
+        {
+            var timer = new Timer(
+                state => folderSync.SynchronizeFolders(),
+                null,
+                0,
+                syncInterval);
         }
     }
 }
